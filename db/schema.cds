@@ -21,7 +21,7 @@ entity Products {
 }
 
 entity Suppliers {
-    SupplierID     : UUID;                  // Primary Key - Supplier ID
+    SupplierID     : UUID;                  // Supplier ID
     CompanyName    : String(100);           // Company Name
     ContactName    : String(100);           // Contact Name
     ContactTitle   : String(100);           // Contact Title
