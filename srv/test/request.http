@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:4004/odata/v4
+
+### CREATE
+POST {{baseUrl}}/catalog/logBooks HTTP/1.1
+Content-Type: application/json
+
+{ "borrowerName": "Clark", "borrowerID": "1234", "bookTitle": "Superman",  "authorName": "Siegel", "readDate": 2025-12-12 }
+
+### READ
+GET {{baseUrl}}/catalog/logBooks HTTP/1.1
+
+### UPDATE
+//PATCH {{baseUrl}}/catalog/logBooks(ID='{{UUID}}') HTTP/1.1
+//Content-Type: application/json
+
+//{ "readDate" }

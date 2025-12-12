@@ -1,4 +1,5 @@
-namespace AcitivityOne;
+//THIS FILE WHERE WE CREATE CDS OBJECTS: TABLES
+namespace ActivityOne;
 
 entity Books {
     key ID        : UUID;                  // Primary Key - Book ID
