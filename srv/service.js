@@ -19,26 +19,6 @@ module.exports = async srv => {
         console.log(`Deleting Book record for ID: ${req.data.borrowerID}`)
     });
 
-    srv.on('northwind', async (req) => {
-        try {
-            const response = await executeHttpRequest(
-                {
-                    destinationName: "northwind",
-                },
-                {
-                    method: "GET",
-                    url: "/V3/Northwind/Northwind.svc/Products?$format=json",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                }
-            );
-            return response.data;
-        } catch (error) {
-            return { 'MESSAGE': error.message || error.toString() };
-        }
-    });
-
     srv.on('logBooks', async (req) => {
         const { name, id, title, author, date } = req.data;
         const result = await LogBooks(name, id, title, author, date);

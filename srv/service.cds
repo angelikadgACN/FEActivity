@@ -9,8 +9,6 @@ service CatalogService {
   entity Suppliers  as projection on my.Suppliers;
   entity Categories as projection on my.Categories;
 
-  function northwind() returns String;
-
   action logBooks(name: String, id: String, title: String, author: String, date: Date) returns String;
 
   action getBooks(id: String) returns String;
