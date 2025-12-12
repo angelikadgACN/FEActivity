@@ -11,6 +11,8 @@ service CatalogService {
 
   function northwind() returns String;
 
-  action logBooks(borrowerName: String, borrowerID: String, bookTitle: String, authorName: String, readDate: Date) returns String;
+  action logBooks(name: String, id: String, title: String, author: String, date: Date) returns String;
+
+  action getBooks(id: String) returns String;
 }
 

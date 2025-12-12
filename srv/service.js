@@ -1,10 +1,12 @@
 //THIS FILE EXPOSES CREATED FUNCTIONS AS A SERVICE
 const cds = require('@sap/cds');
 const { LogBooks } = require('../srv/setter/index');
+const { FetchBooks } = require('../srv/getter/index');
 
 module.exports = async srv => {
     //Before inserting a Book
     srv.before('CREATE', 'Books', req => {
+        console.log(`Inserting Book record`)
     });
 
     //Log before Updating
@@ -38,8 +40,14 @@ module.exports = async srv => {
     });
 
     srv.on('logBooks', async (req) => {
-        const { borrowerName, borrowerID, bookTitle, authorName, readDate } = req.data;
-        const result = await LogBooks();
+        const { name, id, title, author, date } = req.data;
+        const result = await LogBooks(name, id, title, author, date);
         return result; //Return a string
+    });
+
+    srv.on('getBooks', async (req) => {
+        const { id } = req.data;
+        const result = await FetchBooks(id);
+        return result;
     });
 };
