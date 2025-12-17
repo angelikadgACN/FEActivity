@@ -1,81 +1,105 @@
 _schema-version: 3.3.0
 ID: Activity1
+description: A simple CAP project.
 version: 1.0.0
-description: "A simple CAP project."
+modules:
+- name: Activity1-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: Activity1-auth
+  - name: Activity1-db
+  - name: Activity1-destination
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: Activity1-db-deployer
+  type: hdb
+  path: db
+  requires:
+  - name: Activity1-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: Activity1-app-deployer
+  type: com.sap.application.content
+  path: gen
+  requires:
+  - name: Activity1-auth
+  - name: srv-api
+  - name: Activity1-html5-repo-host
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+      content-target: true
+  build-parameters:
+    build-result: app/
+    requires: null
+- name: Activity1-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: Activity1-destination-service
+    parameters:
+      content-target: true
+  - name: Activity1-html5-repo-host
+    parameters:
+      service-key:
+        name: Activity1-html5-repo-host-key
+  - name: Activity1-auth
+    parameters:
+      service-key:
+        name: Activity1-auth-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: febootcamp_Activity1_html5_repo_host
+          ServiceKeyName: Activity1-html5-repo-host-key
+          sap.cloud.service: febootcamp
+        - Authentication: OAuth2UserTokenExchange
+          Name: febootcamp_Activity1_auth
+          ServiceInstanceName: Activity1-auth
+          ServiceKeyName: Activity1-auth-key
+          sap.cloud.service: febootcamp
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+resources:
+- name: Activity1-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: Activity1-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: Activity1-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: Activity1-destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: destination
+    service-plan: lite
+- name: Activity1-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
 parameters:
-  enable-parallel-deployments: true
   deploy_mode: html5-repo
+  enable-parallel-deployments: true
 build-parameters:
   before-all:
-    - builder: custom
-      commands:
-        - npm ci
-        - npx cds build --production
-modules:
-  - name: Activity1-srv
-    type: nodejs
-    path: gen/srv
-    parameters:
-      instances: 1
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: Activity1-auth
-      - name: Activity1-db
-      - name: Activity1-destination
-
-  - name: Activity1-db-deployer
-    type: hdb
-    path: db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: Activity1-db
-
-  - name: Activity1-app-deployer
-    type: com.sap.application.content
-    path: gen
-    requires:
-      - name: Activity1-auth
-      - name: srv-api
-      - name: Activity1-html5-repo-host
-        parameters:
-          content-target: true
-          config:
-            HTML5Runtime_enabled: true
-    build-parameters:
-      build-result: app/
-      requires:
-
-
-resources:
-  - name: Activity1-auth
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: xsuaa
-      service-plan: application
-      path: ./xs-security.json
-      config:
-        xsappname: Activity1-${org}-${space}
-        tenant-mode: dedicated
-  - name: Activity1-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
-  - name: Activity1-destination
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: destination
-      service-plan: lite
-
-  - name: Activity1-html5-repo-host
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: html5-apps-repo
-      service-plan: app-host
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
