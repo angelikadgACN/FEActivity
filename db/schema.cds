@@ -33,7 +33,7 @@ entity Suppliers {
     PostalCode     : String(100);           // Postal Code
     Country        : String(100);           // Country
     Phone          : String(100);           // Phone
-    Fax            : Integer;               // Fax
+    Fax            : String(100);           // Fax
     HomePage       : String(200);           // Home Page
 }
 
